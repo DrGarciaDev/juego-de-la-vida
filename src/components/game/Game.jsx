@@ -1,10 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 function Game () {
     const [grid, setGrid] = useState([])
-    const [start, setStart] = useState(false)
-    const startRef = useRef(start)
-    startRef.current = start
 
     const ROWS = 25;
     const COLS = 35;
@@ -35,7 +32,7 @@ function Game () {
         }
     }
 
-    const positions = [
+    const posicionDeVecinos = [
         [0, 1],
         [0, -1],
         [1, -1],
@@ -59,21 +56,22 @@ function Game () {
     }, [])
 
     function correrAutomata() {
-        if (!startRef.current) {
-            return
-        }
-        setGrid((parametroGrid) => {
+        let gridRenovado = (parametroGrid) => {
             return parametroGrid.map((row, i) => {
                 return row.map((cell, j) => {
-                    let sum = 0
+                    let sum     = 0
                     let casilla = 0;
-                    positions.forEach((position) => {
-                        const x = i + position[0]
-                        const y = j + position[1]
+                    posicionDeVecinos.forEach((posiciones) => {
+                        const x = i + posiciones[0]
+                        const y = j + posiciones[1]
                         if (x >= 0 && x < ROWS && y >= 0 && y < COLS) {
                             sum += parametroGrid[x][y]
                         }
                     })
+
+                    // Si una célula está viva y tiene dos o tres vecinas vivas, sobrevive.
+                    // Si una célula está muerta y tiene tres vecinas vivas, nace.
+                    // Si una célula está viva y tiene más de tres vecinas vivas, muere.
 
                     if (sum < 2 || sum > 3) {
                         casilla = 0
@@ -88,7 +86,8 @@ function Game () {
                     return casilla;
                 })
             })
-        })
+        }
+        setGrid(gridRenovado)
     }
 
     return (
@@ -105,22 +104,16 @@ function Game () {
                 <button
                     style={{ marginRight: "1rem" }}
                     onClick={() => {
-                        setStart(!start)
-                        if (!start) {
-                            startRef.current = true
-                        }
-                        setInterval(() => {
-                            correrAutomata()
-                        }, 1000)
+                        correrAutomata()
                     }}
                     >
-                    {start ? "Stop" : "Start"}
+                        Generación +
                 </button>
             </div>
             <div style={{ display: "flex", flexWrap: "wrap" }}>
                 {grid && grid.map((rows, i) =>
                     rows.map((col, k) => (
-                        <div key={k}
+                        <div key={`${i}-${k}`}
                             style={{
                                 width: 20,
                                 height: 20,
