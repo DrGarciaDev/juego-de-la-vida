@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 function Game () {
     const [grid, setGrid] = useState([])
 
-    const ROWS = 25;
-    const COLS = 35;
+    const ROWS = 10;
+    const COLS = 10;
 
     // MÉTODO RECURSIVO
     const crearGrid = (contador, grid) => {
@@ -60,30 +60,15 @@ function Game () {
             return parametroGrid.map((row, i) => {
                 return row.map((cell, j) => {
                     let sum     = 0
-                    let casilla = 0;
                     posicionDeVecinos.forEach((posiciones) => {
                         const x = i + posiciones[0]
                         const y = j + posiciones[1]
-                        if (x >= 0 && x < ROWS && y >= 0 && y < COLS) {
-                            sum += parametroGrid[x][y]
-                        }
+                        sum = (x >= 0 && x < ROWS && y >= 0 && y < COLS) ? sum + parametroGrid[x][y] : sum;
                     })
-
                     // Si una célula está viva y tiene dos o tres vecinas vivas, sobrevive.
                     // Si una célula está muerta y tiene tres vecinas vivas, nace.
                     // Si una célula está viva y tiene más de tres vecinas vivas, muere.
-
-                    if (sum < 2 || sum > 3) {
-                        casilla = 0
-                    }
-                    else if (sum === 3) {
-                        casilla = 1
-                    }
-                    else {
-                        casilla = parametroGrid[i][j]
-                    }
-
-                    return casilla;
+                    return (sum < 2 || sum > 3) ? 0 : ( (sum === 3) ? 1 : parametroGrid[i][j] );
                 })
             })
         }
@@ -115,12 +100,12 @@ function Game () {
                     rows.map((col, k) => (
                         <div key={`${i}-${k}`}
                             style={{
-                                width: 20,
-                                height: 20,
+                                width: 40,
+                                height: 40,
                                 backgroundColor: grid[i][k] ? "black" : "",
-                                border: "1px solid black",
+                                border: "1px solid black"
                             }}
-                        />
+                        >{`${i},${k}`}</div>
                     ))
                 )}
             </div>
