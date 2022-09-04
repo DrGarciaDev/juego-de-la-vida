@@ -9,27 +9,12 @@ function Game () {
     // MÉTODO RECURSIVO
     const crearGrid = (contador, grid) => {
         const rowInterna  = [];
-        //base case
-        switch (contador) {
-            case ROWS:
-                return grid;
-        
-            default:
-                grid.push(crearRowDeGrid(0, rowInterna));
-                return crearGrid(contador + 1, grid);
-        }
+        return contador === ROWS ? grid : ( grid.push(crearRowDeGrid(0, rowInterna)), crearGrid(contador + 1, grid) )
     }
 
     // MÉTODO RECURSIVO 
     const crearRowDeGrid = (contador, row) => {
-        switch (contador) {
-            case COLS:
-                return row;
-        
-            default:
-                row.push(Math.floor(Math.random() * 2))
-                return crearRowDeGrid(contador + 1, row);
-        }
+        return contador === COLS ? row : ( row.push(Math.floor(Math.random() * 2)), crearRowDeGrid(contador + 1, row) );
     }
 
     const posicionDeVecinos = [
